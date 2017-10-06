@@ -7,21 +7,19 @@ public class Atm {
 
 	private int accountNumber = 19;
 	private String pin = "0110";
-	private double balance = 100;
+	private double balance = 50;
 	private Scanner inputScanner;
 
-	private int amountOfMoneyInMachine = 1250;
+	private int amountOfMoneyInMachine = 500;
 
 	private int status;
 
 	private int request;
 	private int requestedAmount;
 
-	private int amountOfTwenties;
-	private int amountOfTens;
-	/*
-	 * private int amountOfFives; private int amountOfOnes;
-	 */
+	private int amountOfTwenties = 20;
+	private int amountOfTens = 10;
+	private int amountOfBills;
 
 	public boolean doAuthenticate() {
 		/* display */
@@ -43,30 +41,52 @@ public class Atm {
 
 	public void doHandleTransaction() {
 		if (this.request == 1) {
-			if (requestedAmount <= this.amountOfMoneyInMachine) {
+			if (requestedAmount <= this.amountOfMoneyInMachine && requestedAmount <= this.balance) {
 				this.balance = this.balance - requestedAmount;
 				this.display("$" + requestedAmount + " given. \nBalance is now " + this.balance);
-
+				this.amountOfMoneyInMachine = this.amountOfMoneyInMachine - requestedAmount;
+			}
+			if (requestedAmount > this.amountOfMoneyInMachine) {
+				display("Not enough money in machine");
+			}
+			if (requestedAmount > this.balance) {
+				display("Not enough money in account");
 			}
 		}
-		if (this.request == 2) {
+		if (this.request == 2)
+
+		{
 			if (requestedAmount <= this.amountOfMoneyInMachine) {
 				this.balance = this.balance + requestedAmount;
 				this.display("$" + requestedAmount + " deposited. \nBalance is now " + this.balance);
-			}
-			else {
-				display("Not enough money in machine");
+				this.amountOfMoneyInMachine = this.amountOfMoneyInMachine + requestedAmount;
 			}
 		}
+	}
+	public void billsWithdrawn() {
+		this.amountOfTwenties = requestedAmount % 20;
+	}
+	public void amountOfBills() {
+		this.amountOfBills = amountOfTens + amountOfTwenties;
+
 	}
 
 	public void doHandleRequest() {
 		this.display("Press 1 for withdraw, Press 2 for deposit");
 		Scanner input = new Scanner(System.in);
 		this.request = input.nextInt();
-		this.display("How much would like to transact?");
-		this.requestedAmount = input.nextInt();
-
+		if (this.request < 1) {
+			display("Error");
+			this.doHandleRequest();
+		}
+		if (this.request > 2) {
+			display("Error");
+			this.doHandleRequest();
+		}
+		if (this.request == 1 || this.request == 2) {
+			this.display("How much would like to transact?");
+			this.requestedAmount = input.nextInt();
+		}
 	}
 
 	public Atm(Scanner input) {
@@ -95,6 +115,7 @@ public class Atm {
 		atm.doHandleRequest();
 		atm.doHandleTransaction();
 		atm.doFinish();
+		System.out.print(atm.amountOfMoneyInMachine);
 
 		scan.close();
 	}
