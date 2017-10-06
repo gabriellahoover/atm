@@ -111,7 +111,6 @@ public class Atm {
 				atm.display("Failed try again");
 			}
 		}
-		/* authenticate */
 		atm.doHandleRequest();
 		atm.doHandleTransaction();
 		atm.doFinish();
