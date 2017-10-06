@@ -41,7 +41,7 @@ public class Atm {
 
 	public void doHandleTransaction() {
 		if (this.request == 1) {
-			if (requestedAmount <= this.amountOfMoneyInMachine && requestedAmount <= this.balance) {
+			if (requestedAmount < this.amountOfMoneyInMachine && requestedAmount < this.balance) {
 				this.balance = this.balance - requestedAmount;
 				this.display("$" + requestedAmount + " given. \nBalance is now " + this.balance);
 				this.amountOfMoneyInMachine = this.amountOfMoneyInMachine - requestedAmount;
@@ -63,9 +63,15 @@ public class Atm {
 			}
 		}
 	}
+
 	public void billsWithdrawn() {
-		this.amountOfTwenties = requestedAmount % 20;
+		if (this.request == 1) {
+			this.amountOfTwenties = amountOfTwenties + (requestedAmount / 20);
+			this.amountOfTens = requestedAmount % 20;
+			System.out.print(amountOfTwenties);
+		}
 	}
+
 	public void amountOfBills() {
 		this.amountOfBills = amountOfTens + amountOfTwenties;
 
@@ -84,7 +90,7 @@ public class Atm {
 			this.doHandleRequest();
 		}
 		if (this.request == 1 || this.request == 2) {
-			this.display("How much would like to transact?");
+			this.display("Enter amount");
 			this.requestedAmount = input.nextInt();
 		}
 	}
@@ -114,7 +120,8 @@ public class Atm {
 		atm.doHandleRequest();
 		atm.doHandleTransaction();
 		atm.doFinish();
-		System.out.print(atm.amountOfMoneyInMachine);
+		/*System.out.print(atm.amountOfMoneyInMachine);*/
+		atm.billsWithdrawn();
 
 		scan.close();
 	}
