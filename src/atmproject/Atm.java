@@ -12,14 +12,11 @@ public class Atm {
 
 	private int amountOfMoneyInMachine = 500;
 
-	private int status;
-
 	private int request;
 	private int requestedAmount;
 
 	private int amountOfTwenties = 10;
 	private int amountOfTens = 30;
-	private int amountOfBills;
 	private int requestedTwenties;
 	private int requestedTens;
 
@@ -66,7 +63,19 @@ public class Atm {
 		}
 	}
 
-	public void withdrawTwenties() {
+	public void withdrawBills() {
+		if (this.request == 1) {
+			if (this.requestedAmount % 20 > amountOfTwenties) {
+				this.requestedTens = requestedAmount / 10;
+				this.amountOfTens = amountOfTens - requestedTens; 
+			}
+			this.requestedTwenties = requestedAmount / 20;
+			this.amountOfTwenties = amountOfTwenties - requestedTwenties;
+			this.requestedTens = ((requestedAmount % 20) / 10);
+			this.amountOfTens = amountOfTens - requestedTens;
+		}
+	}
+	/*public void withdrawTwenties() {
 		if (this.request == 1) {
 			this.requestedTwenties = requestedAmount / 20;
 			this.amountOfTwenties = amountOfTwenties - requestedTwenties;
@@ -83,7 +92,7 @@ public class Atm {
 			this.requestedTens = ((requestedAmount % 20) / 10);
 			this.amountOfTens = amountOfTens - requestedTens;
 		}
-	}
+	}*/
 
 	/*
 	 * public void billsWithdrawn() { if (this.request == 1) {
@@ -96,10 +105,6 @@ public class Atm {
 	 * } }
 	 */
 
-	public void amountOfBills() {
-		this.amountOfBills = amountOfTens + amountOfTwenties;
-
-	}
 
 	public void doHandleRequest() {
 		this.display("Press 1 for withdraw, Press 2 for deposit");
@@ -107,11 +112,9 @@ public class Atm {
 		this.request = input.nextInt();
 		if (this.request < 1) {
 			display("Error");
-			this.doHandleRequest();
 		}
 		if (this.request > 2) {
 			display("Error");
-			this.doHandleRequest();
 		}
 		if (this.request == 1 || this.request == 2) {
 			this.display("Enter amount");
@@ -140,7 +143,7 @@ public class Atm {
 		 * } }
 		 */
 		atm.doHandleRequest();
-		atm.billsWithdrawn();
+		atm.withdrawBills();
 		atm.doHandleTransaction();
 		atm.doFinish();
 		/* System.out.print(atm.amountOfMoneyInMachine); */
