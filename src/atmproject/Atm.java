@@ -7,7 +7,7 @@ public class Atm {
 
 	private int accountNumber = 19;
 	private String pin = "0110";
-	private double balance = 50;
+	private double balance = 100;
 	private Scanner inputScanner;
 
 	private int amountOfMoneyInMachine = 500;
@@ -17,9 +17,11 @@ public class Atm {
 	private int request;
 	private int requestedAmount;
 
-	private int amountOfTwenties = 20;
-	private int amountOfTens = 10;
+	private int amountOfTwenties = 10;
+	private int amountOfTens = 30;
 	private int amountOfBills;
+	private int requestedTwenties;
+	private int requestedTens;
 
 	public boolean doAuthenticate() {
 		/* display */
@@ -41,36 +43,58 @@ public class Atm {
 
 	public void doHandleTransaction() {
 		if (this.request == 1) {
-			if (requestedAmount < this.amountOfMoneyInMachine && requestedAmount < this.balance) {
-				this.balance = this.balance - requestedAmount;
-				this.display("$" + requestedAmount + " given. \nBalance is now " + this.balance);
-				this.amountOfMoneyInMachine = this.amountOfMoneyInMachine - requestedAmount;
-			}
-			if (requestedAmount > this.amountOfMoneyInMachine) {
+			if (this.requestedAmount > this.amountOfMoneyInMachine) {
 				display("Not enough money in machine");
 			}
-			if (requestedAmount > this.balance) {
+			if (this.requestedAmount > this.balance) {
 				display("Not enough money in account");
 			}
-		}
-		if (this.request == 2)
+			if (requestedAmount < this.amountOfMoneyInMachine && requestedAmount < this.balance) {
+				this.balance = this.balance - requestedAmount;
+				this.display("$" + requestedTwenties + " twenties and " + requestedTens
+						+ " ten given. \nBalance is now " + this.balance);
+			}
+			if (this.request == 2)
 
-		{
-			if (requestedAmount <= this.amountOfMoneyInMachine) {
-				this.balance = this.balance + requestedAmount;
-				this.display("$" + requestedAmount + " deposited. \nBalance is now " + this.balance);
-				this.amountOfMoneyInMachine = this.amountOfMoneyInMachine + requestedAmount;
+			{
+				if (requestedAmount <= this.amountOfMoneyInMachine) {
+					this.balance = this.balance + requestedAmount;
+					this.display("$" + requestedAmount + " deposited. \nBalance is now " + this.balance);
+					this.amountOfMoneyInMachine = this.amountOfMoneyInMachine + requestedAmount;
+				}
 			}
 		}
 	}
 
-	public void billsWithdrawn() {
+	public void withdrawTwenties() {
 		if (this.request == 1) {
-			this.amountOfTwenties = amountOfTwenties + (requestedAmount / 20);
-			this.amountOfTens = requestedAmount % 20;
-			System.out.print(amountOfTwenties);
+			this.requestedTwenties = requestedAmount / 20;
+			this.amountOfTwenties = amountOfTwenties - requestedTwenties;
+		}
+
+	}
+
+	public void withdrawTens() {
+		if (this.request == 1) {
+			if (this.requestedAmount % 20 > amountOfTwenties) {
+				this.requestedTens = requestedAmount / 10;
+				this.amountOfTens = amountOfTens - requestedTens; 
+			}
+			this.requestedTens = ((requestedAmount % 20) / 10);
+			this.amountOfTens = amountOfTens - requestedTens;
 		}
 	}
+
+	/*
+	 * public void billsWithdrawn() { if (this.request == 1) {
+	 * this.requestedTwenties = requestedAmount / 20; this.amountOfTwenties =
+	 * amountOfTwenties - requestedTwenties; this.requestedTens = ((requestedAmount
+	 * % 20) / 10); this.amountOfTens = amountOfTens - requestedTens;
+	 * System.out.println(amountOfTwenties + " " + amountOfTens);
+	 * System.out.println(requestedTwenties + " " + requestedTens);
+	 * 
+	 * } }
+	 */
 
 	public void amountOfBills() {
 		this.amountOfBills = amountOfTens + amountOfTwenties;
@@ -110,18 +134,16 @@ public class Atm {
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
 		Atm atm = new Atm(scan);
-		boolean authenticated = false;
-		while (!authenticated) {
-			authenticated = atm.doAuthenticate();
-			if (!authenticated) {
-				atm.display("Failed try again");
-			}
-		}
+		/*
+		 * boolean authenticated = false; while (!authenticated) { authenticated =
+		 * atm.doAuthenticate(); if (!authenticated) { atm.display("Failed try again");
+		 * } }
+		 */
 		atm.doHandleRequest();
+		atm.billsWithdrawn();
 		atm.doHandleTransaction();
 		atm.doFinish();
-		/*System.out.print(atm.amountOfMoneyInMachine);*/
-		atm.billsWithdrawn();
+		/* System.out.print(atm.amountOfMoneyInMachine); */
 
 		scan.close();
 	}
